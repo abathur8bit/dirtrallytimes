@@ -4,6 +4,7 @@ import "package:flutter_slidable/flutter_slidable.dart";
 import "database.dart";
 import "edittime.dart";
 import "racetime.dart";
+import "filter.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  FilterValue filterValue = FilterValue();
   DirtDatabase db = DirtDatabase();
   RaceTime? previousTime;
   int currentSortColumn=0;
@@ -26,10 +28,17 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
+    List<RaceTime> filteredTimes = filteredList(filterValue);
     return Scaffold(
-      // appBar: AppBar(title:Text("Dirt Rally 3.0 Times")),
-      //   backgroundColor: Colors.blueGrey,
-        body:
+        appBar: AppBar(title:Text("Dirt Rally 2.0 Times"),
+            //   backgroundColor: Colors.blueGrey,
+            actions: [
+              //filter_alt_outlined no filter
+              //filter_alt filter active
+              IconButton(iconSize: 28,icon:Icon(filterValue.isEmpty() ? Icons.filter_alt_outlined:Icons.filter_alt),onPressed: onFilter),
+            ]
+        ),
+      body:
         ListView(
           children: [
             SingleChildScrollView(
@@ -111,15 +120,15 @@ class _HomePageState extends State<HomePage> {
                           });
                         }),
                   ],
-                  rows: List<DataRow>.generate(db.raceTimes.length, (index) => DataRow(
-                    onSelectChanged: (selected) => onEditTime(index),
+                  rows: List<DataRow>.generate(filteredTimes.length, (index) => DataRow(
+                    onSelectChanged: (selected) => onEditTime(filteredTimes[index]),
                       cells: <DataCell>[
-                        DataCell(Text(DirtDatabase.dateTimeYYYYMMDDHHMM(db.raceTimes[index].raceDate))),
-                        DataCell(Text(db.raceTimes[index].country)),
-                        DataCell(Text(db.raceTimes[index].track)),
-                        DataCell(Text(db.raceTimes[index].carName)),
-                        DataCell(Text(db.raceTimes[index].carPerformanceClass(db.cars))),
-                        DataCell(Text(db.raceTimes[index].timeFormatted())),
+                        DataCell(Text(DirtDatabase.dateTimeYYYYMMDDHHMM(filteredTimes[index].raceDate))),
+                        DataCell(Text(filteredTimes[index].country)),
+                        DataCell(Text(filteredTimes[index].track)),
+                        DataCell(Text(filteredTimes[index].carName)),
+                        DataCell(Text(filteredTimes[index].carPerformanceClass(db.cars))),
+                        DataCell(Text(filteredTimes[index].timeFormatted())),
                       ]
                   )))
               ),
@@ -133,6 +142,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  int filteredLength(FilterValue filter) {
+    return filteredList(filter).length;
+  }
+
+  RaceTime filteredAt(FilterValue filter,int index) {
+    List<RaceTime> filtered = filteredList(filter);
+    return filtered[index];
+  }
+
+  List<RaceTime> filteredList(FilterValue filter) {
+    //first by country, then by track
+    List<RaceTime> filteredByCountry = [];
+    for(final rt in db.raceTimes) {
+      if(filterValue.country.isEmpty) {
+        filteredByCountry.add(rt);
+      } else if(rt.country == filterValue.country) {
+        filteredByCountry.add(rt);
+      }
+    }
+    List<RaceTime> filteredByTrack = [];
+    for(final rt in filteredByCountry) {
+      if(filterValue.track.isEmpty) {
+        filteredByTrack.add(rt);
+      } else if(filterValue.track == rt.track) {
+        filteredByTrack.add(rt);
+      }
+    }
+    List<RaceTime> filteredByCar = [];
+    for(final rt in filteredByTrack) {
+      if(filterValue.carName.isEmpty) {
+        filteredByCar.add(rt);
+      } else if(filterValue.carName == rt.carName) {
+        filteredByCar.add(rt);
+      }
+    }
+    return filteredByCar;
+  }
+
+  void onFilter() async {
+    final bool result = await Navigator.push(context,MaterialPageRoute(builder: (context) => Filter(db:db,filterValue:filterValue)));
+    if(result) {
+      setState(() {
+        //TODO filter race times
+      });
+    }
+  }
+
   void onAddTime() async {
     final RaceTime? time = await Navigator.push(context,MaterialPageRoute(builder: (context) => EditTime(db:db,editTime:previousTime,newTrack: true,)));
     if(time != null) {
@@ -142,12 +198,25 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void onEditTime(int index) async {
-    final RaceTime? time = await Navigator.push(context,MaterialPageRoute(builder: (context) => EditTime(db:db,editTime:db.raceTimes[index],newTrack: false,)));
-    if(time != null) {
-      setState(() {
-        previousTime = time;
-      });
+  void onEditTime(RaceTime rt) async {
+    RaceTime? parent = findParent(rt);
+    if(parent == null) {
+      print("not able to find parent for ${rt.toString()}");
+    } else {
+      final RaceTime? time = await Navigator.push(context,MaterialPageRoute(builder: (context) => EditTime(db:db,editTime:parent,newTrack: false,)));
+      if(time != null) {
+        setState(() {
+          previousTime = time;
+        });
+      }
     }
+  }
+
+  //finds the given race time in the db list
+  RaceTime? findParent(RaceTime rt) {
+    for(final time in db.raceTimes) {
+      if(rt.equals(time)) return time;
+    }
+    return null;
   }
 }

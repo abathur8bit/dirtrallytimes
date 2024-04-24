@@ -15,6 +15,19 @@ const DBCARS = "DBCARS";
 const DBPREVIOUSTIME = "DBLASTTIME";
 const APP_TITLE = "Dirt Rally 2.0 Times";
 
+List<String> countrys = [
+  "",
+  "Argentina",
+  "Australia",
+  "Belguim",
+  "New Zealand",
+  "Poland",
+  "USA",
+  "Spain",
+  "Unknown",
+];
+
+
 class DirtDatabase {
   Box mybox = Hive.box(DBNAME);
   List<RaceTime> raceTimes = [];

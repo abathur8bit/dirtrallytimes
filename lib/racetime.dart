@@ -33,6 +33,16 @@ class RaceTime {
     this.car
   });
 
+  bool equals(RaceTime rt) {
+    return rt.raceDate == raceDate &&
+        rt.time == time &&
+        rt.country == country &&
+        rt.track == track &&
+        rt.carName == carName &&
+        rt.isAutomatic == isAutomatic &&
+        rt.steeringWheel == steeringWheel;
+  }
+
   ///The minutes portion of the time
   int minutes() {
     return time~/60;

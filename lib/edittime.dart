@@ -5,18 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:axorion/axorion.dart';
 import "database.dart";
 import "racetime.dart";
-
-const double SEPARATION = 15;
-const double MARGIN = 15;
-const double EDITABLE_BORDER_WIDTH = 2.0;
-const double READONLY_BORDER_WIDTH = 2.0;
-const Color EDITABLE_BORDER_COLOR = Colors.black;
-const Color READONLY_BORDER_COLOR = Colors.grey;
-const Color RED_BORDER_COLOR = Colors.red;
-const String ON = "On";
-const String OFF = "Off";
-const String YES = "Yes";
-const String NO = "No";
+import "UIFactory.dart";
 
 class EditTime extends StatefulWidget {
 	final DirtDatabase db;
@@ -33,18 +22,6 @@ class _EditTimeState extends State<EditTime> {
 	TextEditingController minuteController = TextEditingController();
 	TextEditingController secondController = TextEditingController();
 	TextEditingController formattedController = TextEditingController();
-
-	List<String> countrys = [
-		"",
-		"Argentina",
-		"Australia",
-		"Belguim",
-		"New Zealand",
-		"Poland",
-		"USA",
-		"Spain",
-		"Unknown",
-	];
 
 	DateTime raceDate = DateTime.now();
 	List<String> tracks = [""];
@@ -188,11 +165,11 @@ class _EditTimeState extends State<EditTime> {
 					child: ListView(
 						children: [
 							Padding(padding: insets,child: ATextField(label: "Date",controller: dateController)),
-							Padding(padding: insets,child: createRowDropdown("Country", widget.editTime!.country, countrys, onCountry)),
-							Padding(padding: insets,child: createRowDropdown("Track", widget.editTime!.track, tracks, onTrack)),
-							Padding(padding: insets,child: createRowDropdown("Car",widget.editTime!.carName,cars, onCar)),
-							Padding(padding: insets,child: createRowDropdown("Automatic",widget.editTime!.isAutomatic ? YES:NO,yesNo,onAutomatic)),
-							Padding(padding: insets,child: createRowDropdown("Wheel",widget.editTime!.steeringWheel ? YES:NO,yesNo,onSteeringWheel)),
+							Padding(padding: insets,child: UIFactory.createRowDropdown("Country", widget.editTime!.country, countrys, onCountry)),
+							Padding(padding: insets,child: UIFactory.createRowDropdown("Track", widget.editTime!.track, tracks, onTrack)),
+							Padding(padding: insets,child: UIFactory.createRowDropdown("Car",widget.editTime!.carName,cars, onCar)),
+							Padding(padding: insets,child: UIFactory.createRowDropdown("Automatic",widget.editTime!.isAutomatic ? YES:NO,yesNo,onAutomatic)),
+							Padding(padding: insets,child: UIFactory.createRowDropdown("Wheel",widget.editTime!.steeringWheel ? YES:NO,yesNo,onSteeringWheel)),
 							Padding(padding: insets,child: ATextField(label: "Minutes",controller: minuteController,number: true)),
 							Padding(padding: insets,child: ATextField(label: "Seconds",controller: secondController,number: true)),
 							Padding(padding: insets,child: ATextField(label: "Export",
@@ -203,34 +180,5 @@ class _EditTimeState extends State<EditTime> {
 		);
 	}
 
-	static BoxDecoration roundedRect(bool editable) {
-		return roundedRectColored(editable ? EDITABLE_BORDER_COLOR : READONLY_BORDER_COLOR,editable ? EDITABLE_BORDER_WIDTH : READONLY_BORDER_WIDTH);
-		// return BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), border: Border.all(width: editable ? EDITABLE_BORDER_WIDTH : READONLY_BORDER_WIDTH, color: editable ? EDITABLE_BORDER_COLOR : READONLY_BORDER_COLOR));
-	}
 
-	static BoxDecoration roundedRectColored(Color color,double width) {
-		return BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), border: Border.all(width: width, color: color));
-	}
-
-	static Widget createRowDropdown(String label, String value, List<String> itemList, void Function(String) selectHandler) {
-		final double colWidth = 150;
-		return Padding(padding: EdgeInsets.only(bottom: SEPARATION), child: Container(decoration: roundedRect(true), child: Row(
-			children: [
-				//label
-				Padding(padding: EdgeInsets.only(left: MARGIN), child: Container(width: colWidth, child: Text(label, textAlign: TextAlign.left))),
-				//field
-				Expanded(
-						child: DropdownButton<String>(
-								value: value,
-								icon: const Icon(Icons.arrow_downward),
-								onChanged: (String? newValue) => selectHandler(newValue!),
-								items: itemList.map<DropdownMenuItem<String>>((String value) {
-									return DropdownMenuItem<String>(
-										value: value,
-										child: Text(value),
-									);
-								}).toList()))
-			],
-		)));
-	}
 }
