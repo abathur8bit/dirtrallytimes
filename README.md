@@ -1,14 +1,65 @@
 # dirtrallytimer
 
-Track times from Dirt Rally races
+Track times from Dirt Rally races.
+
+
+# Hive
+Using [Hive](https://pub.dev/packages/hive) and [hive_flutter](https://pub.dev/packages/hive_flutter) for local database storage.
+The track objects use a [TypeAdapter](https://docs.hivedb.dev/#/custome-objects/generate_adapter). Run the following to generate part files (ie `car.g.dart`).
+
+```
+dart run build_runner build
+```
+
+
 
 # TODO
-x Automatic is sometimes set to yes after saving a new track time
-- double times when inspecting a time
-- Need to be able to delete an entry
-  
-- when importing times, add any tracks and cars that are not already in the DB
-- Create new car screen
-- Create new track screen
+## Bugs
+- [x] Automatic is sometimes set to yes after saving a new track time
+- [ ] *med* Double times when inspecting a time. *Doesn't happen all the time.*
+- [ ] *low* When adding track time, scroll to show the entry you just made. LIkely also need to resort the list, as when I have date sorted newest first, it put the new entry at the bottom of the list
+- [ ] Dropdowns the same color and size as text fields `ATextField`.
 
-- When adding track time, make sure to show last entry so you don't have to scroll down, or reverse sort order to new on top by default
+## Features
+- [x] Need to be able to delete an entry
+- [ ] Show time difference on race times screen
+- [ ] Create new car screen
+- [ ] Create new track screen
+- [ ] Move stuff in UIFactory to a class in axorion lib. 
+- [ ] Create a message box so I don't have to use `showDialog<>()` which requires a lot of extra lines. Just want a single liner to show a message.
+- [ ] Create drawer to select Times, Tracks, Cars, About
+
+# Location of database file
+On Android and iOS, file is pretty much hidden anyway, so knowing it's location is pretty useless. 
+
+On **Windows**, the file is located in the users documents directory, and is called `dirtrallytimesdatabase.hive`, 
+where **dirtrallytimesdatabase** is the name passed in on the call to `Hive.box()`.
+
+In `database.dart`:
+
+```dart
+import 'package:hive_flutter/hive_flutter.dart';
+const DBNAME = "DirtRallyTimesDatabase";
+class DirtDatabase {
+  Box mybox = Hive.box(DBNAME);
+  ...
+}
+```
+
+# Main screen (Times)
+Shows times of tracks.
+
+
+
+# Track screen
+Show list of tracks, tracks with times are shown first by default. *Sorted by last raced first?*
+- Track Name, Last raced, Fasted time & car
+- Has filter, to filter by car
+- Graph showing times
+
+
+
+```
+| Track | Last Raced | Time | Car |
+```
+

@@ -1,3 +1,4 @@
+import "package:dirtrallytimer/filter.dart";
 import "package:flutter/foundation.dart";
 import 'package:hive_flutter/hive_flutter.dart';
 import "track_names.dart";
@@ -29,6 +30,7 @@ List<String> countrys = [
 
 
 class DirtDatabase {
+  FilterValue filter = FilterValue();
   Box mybox = Hive.box(DBNAME);
   List<RaceTime> raceTimes = [];
   List<Track> tracks = [];
@@ -101,7 +103,7 @@ class DirtDatabase {
   void createDefaultData() {
     createTracks();
     createCars();
-    // createTimes();
+    createTimes();
   }
 
   void createCars() {
@@ -220,6 +222,57 @@ class DirtDatabase {
   void delete(RaceTime rt) {
     raceTimes.remove(rt);
     updateData();
+  }
+
+  List<Track> filteredTracks() {
+    List<Track> filtered = [];
+    for(final t in tracks) {
+      if(filter.country.isEmpty) {
+        filtered.add(t);
+      } else if(t.country == filter.country) {
+        filtered.add(t);
+      }
+    }
+    return filtered;
+  }
+
+  List<RaceTime> filteredTimes() {
+    // return raceTimes;
+
+    //first by country, then by track, then by car
+    List<RaceTime> filteredByCountry = [];
+    for(final rt in raceTimes) {
+      if(filter.country.isEmpty) {
+        filteredByCountry.add(rt);
+      } else if(rt.country == filter.country) {
+        filteredByCountry.add(rt);
+      }
+    }
+    List<RaceTime> filteredByTrack = [];
+    for(final rt in filteredByCountry) {
+      if(filter.track.isEmpty) {
+        filteredByTrack.add(rt);
+      } else if(filter.track == rt.track) {
+        filteredByTrack.add(rt);
+      }
+    }
+    List<RaceTime> filteredByCar = [];
+    for(final rt in filteredByTrack) {
+      if(filter.carName.isEmpty) {
+        filteredByCar.add(rt);
+      } else if(filter.carName == rt.carName) {
+        filteredByCar.add(rt);
+      }
+    }
+    return filteredByCar;
+  }
+
+  //finds the given race time in the db list instead of the filtered list
+  RaceTime? findParent(RaceTime rt) {
+    for(final time in raceTimes) {
+      if(rt.equals(time)) return time;
+    }
+    return null;
   }
 }
 
