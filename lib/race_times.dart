@@ -139,7 +139,6 @@ const raceTimeSamples = {
   ["2024-04-21 20:40","USA","Fuller Mountain Descent","Ford Escort RS Cosworth","N","Y","3","49.247"],
   ["2024-04-21 20:44","USA","Fuller Mountain Descent","Ford Fiesta R5","N","Y","3","47.435"],
   ["2024-04-21 20:52","USA","Fuller Mountain Descent","Ford Fiesta R5","N","Y","3","34.610"],
-  ["2024-04-21 21:12","USA","Fuller Mountain Descent","Ford Fiesta R5","N","Y","3","49.247"],
   ["2024-04-22 00:56","USA","Fuller Mountain Descent","Ford Fiesta R5 MKII","Y","Y","3","31.435"],
   ["2024-04-22 01:54","New Zealand","Te Awanga Forward","Ford Fiesta R5 MKII","N","Y","8","53.746"],
   ["2024-04-22 01:54","New Zealand","Te Awanga Forward","Ford Fiesta R5 MKII","N","Y","999","52.944"],

@@ -99,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                             updateTimes();
                           });
                         }),
+                    const DataColumn(label: const Text("Diff")),
                   ],
                   rows: List<DataRow>.generate(filteredTimes.length, (index) => DataRow(
                     onSelectChanged: (selected) => onEditTime(filteredTimes[index]),
@@ -109,6 +110,7 @@ class _HomePageState extends State<HomePage> {
                         DataCell(Text(filteredTimes[index].carName)),
                         DataCell(Text(filteredTimes[index].carPerformanceClass(db.cars))),
                         DataCell(Text(filteredTimes[index].timeFormatted())),
+                        DataCell(Text(calcDifference(index))),
                       ]
                   )))
               ),
@@ -120,6 +122,24 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.add),
         ),
     );
+  }
+
+  String calcDifference(int index) {
+    //sortAscending==true times go from shortest to longest
+    //sortAscending==false times go from longtest to shortest
+    if(sortAscending && index==filteredTimes.length-1) return "--";
+    if(!sortAscending && index==0) return "--";
+    int offset = sortAscending ? 1:-1;
+    double firstTime = filteredTimes[index].time;
+    double secondTime = filteredTimes[index+offset].time;
+    double diff=firstTime-secondTime;
+
+    double remain = diff.abs();
+    int mins = remain~/60;
+    remain -=mins*60;
+    double secs = remain;
+    String symbol = diff<0 ? "-":"+";
+    return "$symbol ${mins}m ${secs.toStringAsFixed(3)}s";
   }
 
   void onFilter() async {
@@ -158,6 +178,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void updateTimes() {
+    print("sort asortAscending=$sortAscending");
     filteredTimes = db.filteredTimes();
     switch(currentSortColumn) {
       case 0: filteredTimes.sort((a,b) => sortAscending ? a.raceDate.compareTo(b.raceDate) : b.raceDate.compareTo(a.raceDate)); break;
