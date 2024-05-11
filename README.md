@@ -1,6 +1,13 @@
 # dirtrallytimer
 
-Track times from Dirt Rally races.
+Track times from Dirt Rally races. Allows you to 
+filter the races by location, track and car.
+
+It allows you to view the best time for a track
+independant of what type of car you drove. So if 
+you had a better time in you Opel Adam R2 then 
+your Ford Fiesta R5 MKII, you can see them 
+next to each other.
 
 
 # Hive
@@ -12,8 +19,9 @@ dart run build_runner build
 ```
 
 
-
 # TODO
+Some things to take care of.
+
 ## Bugs
 - [x] Automatic is sometimes set to yes after saving a new track time
 - [ ] *med* Double times when inspecting a time. *Doesn't happen all the time.*
