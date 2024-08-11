@@ -12,7 +12,7 @@ next to each other.
 
 # Hive
 Using [Hive](https://pub.dev/packages/hive) and [hive_flutter](https://pub.dev/packages/hive_flutter) for local database storage.
-The track objects use a [TypeAdapter](https://docs.hivedb.dev/#/custome-objects/generate_adapter). Run the following to generate part files (ie `car.g.dart`).
+The track objects use a [TypeAdapter](https://docs.hivedb.dev/#/custom-objects/generate_adapter). Run the following to generate part files (ie `car.g.dart`).
 
 ```
 dart run build_runner build
@@ -45,7 +45,7 @@ where **dirtrallytimesdatabase** is the name passed in on the call to `Hive.box(
 
 In `database.dart`:
 
-```dart
+```
 import 'package:hive_flutter/hive_flutter.dart';
 const DBNAME = "DirtRallyTimesDatabase";
 class DirtDatabase {
